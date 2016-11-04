@@ -1,5 +1,5 @@
-docker-
-----------------
+docker-flume
+------------
 
 A basic [Flume](https://flume.apache.org) setup with Docker.
 

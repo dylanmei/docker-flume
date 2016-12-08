@@ -20,6 +20,13 @@ RUN curl -sL --retry 3 \
  && ln -s $JAVA_HOME /usr/java \
  && rm -rf $JAVA_HOME/man
 
+
+ENV SIGIL_VERSION "0.4.0"
+RUN curl -s -L --retry 3 \
+  "https://github.com/gliderlabs/sigil/releases/download/v${SIGIL_VERSION}/sigil_${SIGIL_VERSION}_Linux_x86_64.tgz" \
+  | gunzip \
+  | tar -x -C /usr/bin/
+
 # FLUME
 ENV FLUME_VERSION 1.7.0
 RUN curl -sL --retry 3 --insecure \
@@ -35,7 +42,8 @@ RUN curl -sL --retry 3 --insecure \
  && rm -rf /tmp/*
 
 WORKDIR /usr/flume
-ADD agent.conf /etc/flume/agent.conf
+COPY docker-entrypoint.sh /
+COPY agent.conf /etc/flume/
 
-ENTRYPOINT ["bin/flume-ng"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["agent", "--name", "agent", "--conf", "conf", "--conf-file", "/etc/flume/agent.conf", "-Dflume.root.logger=INFO,console"]
